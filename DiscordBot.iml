@@ -42,9 +42,6 @@
     <orderEntry type="library" name="Gradle: org.tritonus:tritonus-dsp:0.3.6" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:0.9.26" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:0.9.26" level="project" />
-    <orderEntry type="library" name="Gradle: com.github.alphahelix00.Discordinator:discordinator-cf-d4j:1.2.5" level="project" />
-    <orderEntry type="library" name="Gradle: com.github.alphahelix00:Ordinator:1.1.5" level="project" />
-    <orderEntry type="library" name="Gradle: org.jooq:jool:0.9.11" level="project" />
     <orderEntry type="library" name="Gradle: org.xerial:sqlite-jdbc:3.8.11.2" level="project" />
   </component>
 </module>

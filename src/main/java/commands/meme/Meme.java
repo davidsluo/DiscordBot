@@ -1,4 +1,4 @@
-package commands.memes;
+package commands.meme;
 
 import java.sql.Timestamp;
 
@@ -24,6 +24,12 @@ public class Meme {
         this.link = link;
         this.owner = owner;
         this.timestamp = timestamp;
+    }
+
+    public Meme(String name, String link, String owner) {
+        this.name = name;
+        this.link = link;
+        this.owner = owner;
     }
 
 

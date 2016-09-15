@@ -1,4 +1,4 @@
-package commands.memes;
+package commands.meme;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +43,8 @@ public class MemeDatabase {
         memeArray = new ArrayList<>();
 
         connectToDatabase();
-        initDatabase();
-        selectDatabase();
+//        initDatabase();
+//        selectDatabase();
         initTable();
 
         memeArray = loadAllMemes();
@@ -71,7 +71,7 @@ public class MemeDatabase {
     private void initDatabase() {
         LOGGER.info("Initializing database...");
         executeSQL(
-                "CREATE DATABASE IF NOT EXISTS " + DATABASE + ");",
+                "CREATE DATABASE IF NOT EXISTS " + DATABASE + ";",
                 "ERROR CREATING DATABASE"
         );
     }
@@ -79,7 +79,7 @@ public class MemeDatabase {
     private void initTable() {
         LOGGER.info("Initializing table...");
         executeSQL(
-                "CREATE TABLE IF NOT EXISTS" + TABLE + " (" +
+                "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
                         DB_COLUMN.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         DB_COLUMN.NAME + " TEXT NOT NULL, " +
                         DB_COLUMN.LINK + " TEXT NOT NULL, " +
@@ -101,10 +101,11 @@ public class MemeDatabase {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
-            if (errorMessage != null && !errorMessage.equals(""))
+            if (errorMessage != null && !errorMessage.equals("")) {
                 LOGGER.error(errorMessage, e);
-            else
+            } else {
                 LOGGER.error("ERROR EXECUTING SQL", e);
+            }
         }
     }
 
@@ -218,7 +219,7 @@ public class MemeDatabase {
         }
     }
 
-    private void addMeme(Meme meme) {
+    public void addMeme(Meme meme) {
 
         LOGGER.info("Adding " + meme.getName() + " meme.");
 
@@ -247,5 +248,41 @@ public class MemeDatabase {
         } catch (SQLException e) {
             LOGGER.error("ERROR ADDING MEME", e);
         }
+    }
+
+    public Meme loadRandomMeme() {
+
+        Meme      meme   = null;
+        ResultSet result = null;
+
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT * FROM " + TABLE + " ORDERY BY RANDOM() LIMIT 1)"
+        )) {
+            result = statement.executeQuery();
+
+            if (result.next()) {
+                meme = new Meme(
+                        result.getInt(1),
+                        result.getString(2),
+                        result.getString(3),
+                        result.getString(4),
+                        result.getTimestamp(5)
+                );
+                LOGGER.info("Successfully loaded meme " + meme.getName() + ".");
+            }
+        } catch (SQLException e) {
+            LOGGER.error("ERROR WHILE LOADING RANDOM MEME", e);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (result != null) {
+                    result.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return meme;
     }
 }
