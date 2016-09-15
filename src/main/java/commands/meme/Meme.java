@@ -9,14 +9,9 @@ public class Meme {
 
     private int       id;
     private String    name;
-    private String    link;
+    private String       link;
     private String    owner;
     private Timestamp timestamp;
-
-//    public Meme(String name, String link) {
-//        this.name = name;
-//        this.link = link;
-//    }
 
     public Meme(int id, String name, String link, String owner, Timestamp timestamp) {
         this.id = id;
@@ -62,5 +57,10 @@ public class Meme {
                 ((Meme) object).getOwner().equals(this.owner) &&
                 ((Meme) object).getTimestamp().equals(this.timestamp)
         );
+    }
+
+    @Override
+    public String toString() {
+        return String.format("**%s** by **%s** on %s\n%s", getName(), getOwner(), getTimestamp(), getLink());
     }
 }

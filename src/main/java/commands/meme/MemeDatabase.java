@@ -3,6 +3,8 @@ package commands.meme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -81,7 +83,7 @@ public class MemeDatabase {
         executeSQL(
                 "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
                         DB_COLUMN.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        DB_COLUMN.NAME + " TEXT NOT NULL, " +
+                        DB_COLUMN.NAME + " TEXT NOT NULL UNIQUE, " +
                         DB_COLUMN.LINK + " TEXT NOT NULL, " +
                         DB_COLUMN.OWNER + " TEXT, " +
                         DB_COLUMN.TIMESTAMP + " TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);",
@@ -256,7 +258,7 @@ public class MemeDatabase {
         ResultSet result = null;
 
         try (PreparedStatement statement = connection.prepareStatement(
-                "SELECT * FROM " + TABLE + " ORDERY BY RANDOM() LIMIT 1)"
+                "SELECT * FROM " + TABLE + " ORDER BY RANDOM() LIMIT 1"
         )) {
             result = statement.executeQuery();
 
@@ -273,6 +275,8 @@ public class MemeDatabase {
         } catch (SQLException e) {
             LOGGER.error("ERROR WHILE LOADING RANDOM MEME", e);
             e.printStackTrace();
+//        } catch (MalformedURLException e) {
+//            LOGGER.error("ERROR WHILE LOADING RANDOM MEME - INVALID URL", e);
         } finally {
             try {
                 if (result != null) {
