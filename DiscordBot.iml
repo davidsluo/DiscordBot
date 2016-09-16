@@ -46,5 +46,6 @@
     <orderEntry type="library" name="Gradle: com.github.alphahelix00.Discordinator:discordinator-cf-d4j:1.2.5" level="project" />
     <orderEntry type="library" name="Gradle: com.github.alphahelix00:Ordinator:1.1.5" level="project" />
     <orderEntry type="library" name="Gradle: org.jooq:jool:0.9.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.json:json:20160810" level="project" />
   </component>
 </module>

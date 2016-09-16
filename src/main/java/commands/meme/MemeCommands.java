@@ -3,11 +3,18 @@ package commands.meme;
 import com.github.alphahelix00.discordinator.d4j.commands.utils.CommandUtils;
 import com.github.alphahelix00.ordinator.commands.MainCommand;
 import commands.MonospaceTable;
+import config.Config;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.util.MessageBuilder;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,6 +68,7 @@ public class MemeCommands {
         final String SUCCESS;
         final String INVALID_URL;
         final String INVALID_SYNTAX = "Invalid syntax.";
+        final String IMGUR_API_URL = "https://api.imgur.com/3/album/";
 
         final String[] embeddableExtensions = {
                 "png",
@@ -92,7 +100,7 @@ public class MemeCommands {
             return false;
         };
 
-        if (args.size() < 2) {
+        if (args.size() >= 2) {
             SUCCESS = "Successfully added meme **" + args.get(0) + "**.";
             INVALID_URL = "Invalid URL: " + args.get(1) + ".";
 
@@ -122,6 +130,87 @@ public class MemeCommands {
                     }
                 }
             }
+        } else if (args.size() >= 1) {
+
+            link = args.get(0);
+
+            INVALID_URL = "Invalid URL: " + args.get(0) + ".";
+
+            while (message.equals("")) {
+                try {
+                    url = new URL(link);
+
+                    if (!(url.getHost().equals("imgur.com") || url.getHost().equals("i.imgur.com"))) {
+                        message = INVALID_URL;
+                        break;
+                    }
+
+                    String[] splitPath = url.getPath().split("/");
+
+                    if (splitPath.length != 3 || !splitPath[1].equals("a")) {
+                        message = INVALID_URL;
+                        break;
+                    }
+
+                    URL imgurUrl = new URL(IMGUR_API_URL + splitPath[2]);
+
+                    HttpURLConnection connection = (HttpURLConnection) imgurUrl.openConnection();
+
+                    connection.setRequestMethod("GET");
+
+                    connection.setRequestProperty("Authorization", "Client-ID " + Config.getConfig().getImgurClientId());
+
+                    int responseCode = connection.getResponseCode();
+
+                    if (responseCode != HttpURLConnection.HTTP_OK) {
+                        message = "Error retrieving album data. HTTP Response code: " + responseCode;
+                        break;
+                    }
+
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream())
+                    );
+
+                    String line;
+
+                    StringBuilder response = new StringBuilder();
+
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+
+                    in.close();
+
+                    JSONObject json = new JSONObject(response.toString()).getJSONObject("data");
+                    JSONArray images = json.getJSONArray("images");
+
+                    for (int i = 0; i < images.length(); i++) {
+                        Object title = images.getJSONObject(i).get("title");
+                        String imageTitle =
+                                title instanceof String ? (String) title : images.getJSONObject(i).getString("id");
+                        String imageLink = images.getJSONObject(i).getString("link");
+
+                        // TODO: 9/16/2016 unecessary?
+                        if (imageTitle == null || imageTitle.equals("")) {
+                            imageTitle = images.getJSONObject(i).getString("id");
+                        }
+
+                        database.addMeme(new Meme(imageTitle, imageLink, event.getMessage().getAuthor().getName()));
+                    }
+
+                    message = "Added " + images.length() + " new memes.";
+
+                } catch (MalformedURLException e) {
+                    if (e.getMessage().substring(0, 12).equals("no protocol: ")) {
+                        link = "http://" + link;
+                    } else {
+                        message = INVALID_URL;
+                    }
+                } catch (IOException e) {
+                    message = "Error: " + e.getMessage();
+                }
+            }
+
         } else {
             message = INVALID_SYNTAX;
         }
@@ -144,7 +233,7 @@ public class MemeCommands {
         final String DOES_NOT_EXIST;
         final String SUCCESS;
 
-        if (args.size() < 1) {
+        if (args.size() >= 1) {
             try {
                 int id = Integer.valueOf(args.get(0));
 

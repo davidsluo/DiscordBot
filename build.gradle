@@ -21,5 +21,6 @@ allprojects {
         compile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
         compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2'
         compile 'com.github.alphahelix00.Discordinator:discordinator-cf-d4j:1.2.5'
+        compile group: 'org.json', name: 'json', version: '20160810'
     }
 }

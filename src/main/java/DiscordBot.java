@@ -48,7 +48,7 @@ public class DiscordBot {
     }
 
     public void login() throws DiscordException {
-        client = new ClientBuilder().withToken(config.getToken()).login();
+        client = new ClientBuilder().withToken(config.getDiscordToken()).login();
 
         client.getDispatcher().registerListener(this);
 

@@ -14,8 +14,9 @@ public class Config {
     private static final Logger LOGGER      = LoggerFactory.getLogger(Config.class);
     private static       Config config      = new Config();
 
-    private String botName = "DiscordBot";
-    private String token   = "";
+    private String botName       = "DiscordBot";
+    private String discordToken  = "";
+    private String imgurClientId = "";
 
 
     public static Config getConfig() {
@@ -25,15 +26,8 @@ public class Config {
     private Config() {
         Properties props = loadProps();
         botName = props.getProperty("bot_name", botName);
-        token = props.getProperty("token");
-    }
-
-    public String getBotName() {
-        return botName;
-    }
-
-    public String getToken() {
-        return token;
+        discordToken = props.getProperty("discord_token");
+        imgurClientId = props.getProperty("imgur_client_id");
     }
 
     private Properties loadProps() {
@@ -49,5 +43,15 @@ public class Config {
         return props;
     }
 
+    public String getBotName() {
+        return botName;
+    }
 
+    public String getDiscordToken() {
+        return discordToken;
+    }
+
+    public String getImgurClientId() {
+        return imgurClientId;
+    }
 }
