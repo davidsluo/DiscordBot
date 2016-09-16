@@ -1,4 +1,4 @@
-package commands.meme;
+package commands;
 
 import java.util.ArrayList;
 import java.util.List;

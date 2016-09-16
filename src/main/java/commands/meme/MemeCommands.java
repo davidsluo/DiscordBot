@@ -2,20 +2,22 @@ package commands.meme;
 
 import com.github.alphahelix00.discordinator.d4j.commands.utils.CommandUtils;
 import com.github.alphahelix00.ordinator.commands.MainCommand;
+import commands.MonospaceTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.util.MessageBuilder;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 /**
  * Created by David on 9/15/2016.
  */
+// TODO: 9/16/2016 Make each command their own class?
 public class MemeCommands {
 
     MemeDatabase database;
@@ -90,7 +92,7 @@ public class MemeCommands {
             return false;
         };
 
-        if (args.size() >= 2) {
+        if (args.size() < 2) {
             SUCCESS = "Successfully added meme **" + args.get(0) + "**.";
             INVALID_URL = "Invalid URL: " + args.get(1) + ".";
 
@@ -127,39 +129,54 @@ public class MemeCommands {
         CommandUtils.messageRequestBuffer(message, event, builder, "Add Meme");
     }
 
-//    @MainCommand(
-//            prefix = "?",
-//            name = "Delete Meme",
-//            alias = {"delmeme", "deletememe"},
-//            description = "Delete a meme"
-//    )
-
     @MainCommand(
             prefix = "?",
-            name = "test command",
-            alias = {"test"},
-            description = "test command"
+            name = "Delete Meme",
+            alias = {"delmeme", "deletememe"},
+            description = "Delete a meme by meme ID. Use !listmemes to get a list of memes and their IDs.",
+            usage = "?delmeme <meme id>"
+
     )
-    public void test(List<String> args, MessageReceivedEvent event, MessageBuilder builder) {
+    public void delMeme(List<String> args, MessageReceivedEvent event, MessageBuilder builder) {
         String message = "";
-        URL    url;
 
-        try {
-            url = new URL(args.get(0));
-            message = url.getFile();
+        final String INVALID_SYNTAX = "Syntax error.";
+        final String DOES_NOT_EXIST;
+        final String SUCCESS;
 
-        } catch (IOException e) {
-            message = e.getMessage();
+        if (args.size() < 1) {
+            try {
+                int id = Integer.valueOf(args.get(0));
+
+                DOES_NOT_EXIST = "Meme with ID **" + id + "** does not exist";
+                SUCCESS = "Meme with ID **" + id + "** deleted";
+
+                ArrayList<Meme> meme = database.loadMeme(MemeDatabase.DB_COLUMN.ID, id);
+
+                if (meme.size() == 0) {
+                    message = DOES_NOT_EXIST;
+                } else {
+                    database.removeMemeById(id);
+                    message = SUCCESS;
+                }
+
+            } catch (NumberFormatException e) {
+                message = INVALID_SYNTAX;
+            }
+        } else {
+            message = INVALID_SYNTAX;
         }
 
-        CommandUtils.messageRequestBuffer(message, event, builder, "test command");
+        CommandUtils.messageRequestBuffer(message, event, builder, "Delete Meme");
     }
+
 
     @MainCommand(
             prefix = "?",
             name = "List Memes",
             alias = {"listmemes", "memelist"},
-            description = "List all memes"
+            description = "List all memes",
+            usage = "!listmemes"
     )
     public void listMemes(List<String> args, MessageReceivedEvent event, MessageBuilder builder) {
 
@@ -174,4 +191,26 @@ public class MemeCommands {
 
         CommandUtils.messageRequestBuffer(message, event, builder, "List Memes");
     }
+
+//    @MainCommand(
+//            prefix = "?",
+//            name = "test command",
+//            alias = {"test"},
+//            description = "test command"
+//    )
+//    public void test(List<String> args, MessageReceivedEvent event, MessageBuilder builder) {
+//        String message = "";
+//        URL    url;
+//
+//        try {
+//            url = new URL(args.get(0));
+//            message = url.getFile();
+//
+//        } catch (IOException e) {
+//            message = e.getMessage();
+//        }
+//
+//        CommandUtils.messageRequestBuffer(message, event, builder, "test command");
+//    }
+
 }
