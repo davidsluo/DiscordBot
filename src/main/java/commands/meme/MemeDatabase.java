@@ -17,7 +17,7 @@ public class MemeDatabase {
     private static final String DATABASE = "meme_database";
     private static final String TABLE    = "meme_table";
 
-    private enum DB_COLUMN {
+    public enum DB_COLUMN {
         ID("INTEGER"),
         NAME("TEXT"),
         LINK("TEXT"),
