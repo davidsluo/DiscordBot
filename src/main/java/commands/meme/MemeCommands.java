@@ -84,7 +84,8 @@ public class MemeCommands {
                 "youtube.com",
                 "vimeo.com",
                 "soundcloud.com",
-                "twitch.tv"
+                "twitch.tv",
+                "gfycat.com"
         };
 
 //        not perfect, but works well enough, i think
