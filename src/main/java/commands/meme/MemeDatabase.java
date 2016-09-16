@@ -3,8 +3,6 @@ package commands.meme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -99,15 +97,18 @@ public class MemeDatabase {
 //        executeSQL(sql, null);
 //    }
 
-    private void executeSQL(String sql, String errorMessage) {
+    private Exception executeSQL(String sql, String errorMessage) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
+
+            return null;
         } catch (SQLException e) {
             if (errorMessage != null && !errorMessage.equals("")) {
                 LOGGER.error(errorMessage, e);
             } else {
                 LOGGER.error("ERROR EXECUTING SQL", e);
             }
+            return e;
         }
     }
 
@@ -288,5 +289,10 @@ public class MemeDatabase {
         }
 
         return meme;
+    }
+
+    public ArrayList<Meme> getMemeArray() {
+        this.memeArray = loadAllMemes();
+        return memeArray;
     }
 }
