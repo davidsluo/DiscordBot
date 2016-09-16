@@ -81,7 +81,7 @@ public class MemeDatabase {
         executeSQL(
                 "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
                         DB_COLUMN.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        DB_COLUMN.NAME + " TEXT NOT NULL UNIQUE, " +
+                        DB_COLUMN.NAME + " TEXT NOT NULL, " +
                         DB_COLUMN.LINK + " TEXT NOT NULL, " +
                         DB_COLUMN.OWNER + " TEXT, " +
                         DB_COLUMN.TIMESTAMP + " TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);",
@@ -97,18 +97,15 @@ public class MemeDatabase {
 //        executeSQL(sql, null);
 //    }
 
-    private Exception executeSQL(String sql, String errorMessage) {
+    private void executeSQL(String sql, String errorMessage) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
-
-            return null;
         } catch (SQLException e) {
             if (errorMessage != null && !errorMessage.equals("")) {
                 LOGGER.error(errorMessage, e);
             } else {
                 LOGGER.error("ERROR EXECUTING SQL", e);
             }
-            return e;
         }
     }
 
